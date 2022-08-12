@@ -43,16 +43,17 @@ Add line-by-line comments wheres prompted in the code below, explaining what eac
 # ------ WHAT HAPPENS HERE? ------ #
 # ------ comment line-by-line ---- #
 
-# The line below...
+# The line below creates a sequence of times over which to make the population estimates.
 time_yr <- seq(from = 0, to = 8, by = 1)
 
-# The line below...
+# The line below creates a placeholder matrix with the columns representing the initial population structure and the rows representing the sequence of times created above. Populations will be added in here.
 proj_year <- matrix(ncol = length(fish_year0), nrow = length(time_yr))
 
-# The line below...
+# The line below populates the initial population in the first row of the matrix.
 proj_year[1, ] <- fish_year0
 
-# The for loop below...
+# The for loop below creates a vector indexing the time_yr vector from the second position to the last. We have already populated time at 0. 
+# Take the dot product with the initial years population and add it to row 2 in the proj_year matrix. Loop through taking the dot product of the previous year to fill the matrix rows.
 for (i in 2:length(time_yr)) {
   proj_year[i,] <- fish_leslie %*% proj_year[i-1,]
 }
@@ -61,6 +62,7 @@ for (i in 2:length(time_yr)) {
 # The rest is wrangling & visualization (run to check it out):
 colnames(proj_year) <- c("eggs", "fry", "juvenile", "adult")
 
+# collapse everything except time year column, put names of columns into column called lifestage, put values of the columns into a column called stage_population.
 proj_df <- data.frame(time_yr, proj_year) %>% 
   pivot_longer(cols = -time_yr, names_to = "lifestage", values_to = "stage_population")
 
